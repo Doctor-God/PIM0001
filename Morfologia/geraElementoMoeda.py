@@ -34,11 +34,12 @@ def geraElemento(img, dilat, limite):
                     y_max = y
             else:
                 temp[y,x] = 0
-    cv2.imshow("oi", temp)
+    out = mo.dilata(temp, dilat)
+    cv2.imshow("oi", out)
     cv2.waitKey()
     cv2.destroyAllWindows()
 
-    out = np.copy(temp[y_min:y_max, x_min:x_max])
+    # out = np.copy(temp[y_min:y_max, x_min:x_max])
     # out = np.where(out < limite, 0, 255)
     return out
 
@@ -50,7 +51,7 @@ if __name__ == "__main__":
     #argv[3] = threshold para limiarização
     argv = sys.argv
     img = cv2.imread(argv[1], 0)
-    dilatador = cv2.imread(argv[2])
+    dilatador = cv2.imread(argv[2], 0)
     name_ext = argv[1].split('.')
     elem = geraElemento(img, dilatador, int(argv[3]))
     cv2.imwrite(name_ext[0] + "_elem." + name_ext[1], elem)

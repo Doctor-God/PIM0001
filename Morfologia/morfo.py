@@ -2,44 +2,55 @@
 
 import numpy as np
 import cv2
+from operator import xor
+
+#Os elementos estruturantes devem ter dimensões ímpares para que a origem esteja em um pixel central
 
 def dilata(img, elem):
-    # elem = np.zeros((30,30), np.uint8)
-    out = np.zeros(img.shape, np.uint8)
+    out = np.zeros((img.shape[0] + 2*elem.shape[0], img.shape[1] + 2*elem.shape[1]), np.uint8)
 
-    # out[::] = 255
-    elem_center = (elem.size[0]/2, elem.size[1]/2) #Centro do elemento (no caso da esfera pixel [9,9])
-
+    ec = (elem.shape[0]/2, elem.shape[1]/2) #Centro do elemento (no caso da esfera pixel [2,2])
 
     for x in range(img.shape[1]):
         for y in range(img.shape[0]):
-            if(img[y,x] == 255):
-                for xe in range(elem.shape[1]):
-                    for ye in range(elem.shape[0]):
-                        if(elem[ye,xe] == 255):
-                            out[y+ye, x+xe] = 255
+            found = False
+            for xe in range(-ec[1], ec[1]+1):
+                if(found):
+                    break
+                for ye in range(-ec[0], ec[0]+1):
+                    if(y+ye >=0 and y+ye < img.shape[0] and x+xe >=0 and x+xe < img.shape[1]):
+                        if(elem[ec[0]+ye, ec[1]+xe] and img[y+ye, x+xe]):
+                            out[y+elem.shape[0],x+elem.shape[1]] = 255
+                            found = True
+                            break
+
     return out
 
 def erode(img, elem):
-    # elem = np.zeros((30,30), np.uint8)
     out = np.zeros(img.shape, np.uint8)
 
-    # out[::] = 255
+
+    ec = (elem.shape[0]/2, elem.shape[1]/2) #Centro do elemento (no caso da esfera pixel [2,2])
+
 
     for x in range(img.shape[1]):
         for y in range(img.shape[0]):
-            if(img[y,x] == 255):
-                for xe in range(elem.shape[1]):
-                    fail = False
-                    for ye in range(elem.shape[0]):
-                        if(elem[ye,xe] == 255):
-                            if(img[y+ye, x+xe] == 0):
-                                fail = True
-                                break
-                    if(fail):
+            cant_hold = False
+            for xe in range(-ec[1], ec[1]+1):
+                if(cant_hold):
+                    break
+                for ye in range(-ec[0], ec[0]+1):
+                    if(y+ye >=0 and y+ye < img.shape[0] and x+xe >=0 and x+xe < img.shape[1]):
+
+                        if(elem[ec[0]+ye, ec[1]+xe] and not img[y+ye, x+xe]):
+                            cant_hold = True
+                            break
+                    else:
+                        cant_hold = True
                         break
-                else:
-                    out[y,x] = 255
+
+            else:
+                out[y,x] = 255
     return out
 
 # if __name__ == "__main__":

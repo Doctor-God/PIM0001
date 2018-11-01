@@ -8,6 +8,7 @@ def dilata(img, elem):
     out = np.zeros(img.shape, np.uint8)
 
     # out[::] = 255
+    elem_center = (elem.size[0]/2, elem.size[1]/2) #Centro do elemento (no caso da esfera pixel [9,9])
 
 
     for x in range(img.shape[1]):

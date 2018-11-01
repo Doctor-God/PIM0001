@@ -3,12 +3,17 @@ import numpy as np
 import cv2
 import sys
 from matplotlib import pyplot as plt
+import morfo as mo
 
-def geraElemento(img, limite):
+def geraElemento(img, dilat, limite):
 
     # plt.hist(img.ravel(),256,[0,256]); plt.show()
 
     temp = np.copy(img)
+
+    cv2.imshow("oi", temp)
+    cv2.waitKey()
+    cv2.destroyAllWindows()
 
     x_min = 0
     x_max = 0
@@ -29,6 +34,9 @@ def geraElemento(img, limite):
                     y_max = y
             else:
                 temp[y,x] = 0
+    cv2.imshow("oi", temp)
+    cv2.waitKey()
+    cv2.destroyAllWindows()
 
     out = np.copy(temp[y_min:y_max, x_min:x_max])
     # out = np.where(out < limite, 0, 255)

@@ -11,9 +11,9 @@ def geraElemento(img, dilat, limite):
 
     temp = np.copy(img)
 
-    cv2.imshow("oi", temp)
-    cv2.waitKey()
-    cv2.destroyAllWindows()
+    # cv2.imshow("oi", temp)
+    # cv2.waitKey()
+    # cv2.destroyAllWindows()
 
     x_min = 0
     x_max = 0
@@ -35,9 +35,9 @@ def geraElemento(img, dilat, limite):
             else:
                 temp[y,x] = 0
     out = mo.dilata(temp, dilat)
-    cv2.imshow("oi", out)
-    cv2.waitKey()
-    cv2.destroyAllWindows()
+    # cv2.imshow("oi", out)
+    # cv2.waitKey()
+    # cv2.destroyAllWindows()
 
     # out = np.copy(temp[y_min:y_max, x_min:x_max])
     # out = np.where(out < limite, 0, 255)

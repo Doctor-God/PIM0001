@@ -2,7 +2,6 @@
 import numpy as np
 import cv2
 import sys
-from matplotlib import pyplot as plt
 import morfo as mo
 
 def geraElemento(img, dilat, limite):
@@ -34,14 +33,32 @@ def geraElemento(img, dilat, limite):
                     y_max = y
             else:
                 temp[y,x] = 0
-    out = mo.dilata(temp, dilat)
+    # out = mo.erode(temp, dilat)
+    out = temp
+    
+    y_par = False
+    x_par = False
+    if(out.shape[0] % 2 == 0):
+        y_par = True
+    if(out.shape[1] % 2 == 0):
+        x_par = True
+
+    if(y_par and x_par):
+        new_out = np.zeros((out.shape[0]+1, out.shape[1]+1), np.uint8)
+    elif(y_par):
+        new_out = np.zeros((out.shape[0]+1, out.shape[1]), np.uint8)
+    elif(x_par):
+        new_out = np.zeros((out.shape[0], out.shape[1]+1), np.uint8)
+
+    new_out[0:out.shape[0], 0:out.shape[1]] = out
+
     # cv2.imshow("oi", out)
     # cv2.waitKey()
     # cv2.destroyAllWindows()
 
     # out = np.copy(temp[y_min:y_max, x_min:x_max])
     # out = np.where(out < limite, 0, 255)
-    return out
+    return new_out
 
 
 

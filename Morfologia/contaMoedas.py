@@ -36,39 +36,41 @@ def conta(img, limite, verbose=False):
 
     img_lim = thresholding(img, limite)
 
-    # if(verbose):
-    #     sized = cv2.resize(img_lim, (960, 540))
-    #     cv2.imshow("Imagem limiarizada", sized)
-    #     cv2.waitKey()
-    #     cv2.destroyAllWindows()
+    if(verbose):
+        sized = cv2.resize(img_lim, (960, 540))
+        cv2.imshow("Imagem limiarizada", sized)
+        cv2.waitKey()
+        cv2.destroyAllWindows()
 
 
     temp = cv2.erode(img_lim, elem_1r, iterations=1)
     num_1r = seg.segmenta(temp)
     temp = cv2.dilate(temp, elem_1r, iterations=1)
-    print("Moedas 1r: " + str(num_1r))
     if(verbose):
+        print("Moedas 1r: " + str(num_1r))
         sized = cv2.resize(temp, (960, 540))
-        cv2.imwrite("temp1.jpg", sized)
+        cv2.imshow("Moedas 1r", sized)
         cv2.waitKey()
         cv2.destroyAllWindows()
 
     temp = cv2.erode(img_lim, elem_25, iterations=1)
     num_25 = seg.segmenta(temp) - num_1r
     temp = cv2.dilate(temp, elem_25, iterations=1)
-    print("Moedas 25: " + str(num_25))
     if(verbose):
-        cv2.imshow("Moedas 1r e 25", temp)
+        print("Moedas 25: " + str(num_25))
+        sized = cv2.resize(temp, (960, 540))
+        cv2.imshow("Moedas 1r e 25", sized)
         cv2.waitKey()
         cv2.destroyAllWindows()
 
     temp = cv2.erode(img_lim, elem_5, iterations=1)
     num_5 = seg.segmenta(temp) - (num_1r+num_25)
     temp = cv2.dilate(temp, elem_5, iterations=1)
-    print("Moedas 5: " + str(num_5))
 
     if(verbose):
-        cv2.imshow("Moedas 1r, 25 e 5", temp)
+        print("Moedas 5: " + str(num_5))
+        sized = cv2.resize(temp, (960, 540))
+        cv2.imshow("Moedas 1r, 25 e 5", sized)
         cv2.waitKey()
         cv2.destroyAllWindows()
 
@@ -82,12 +84,13 @@ def conta(img, limite, verbose=False):
     # 	cv2.waitKey()
     # 	cv2.destroyAllWindows()
 
-	num_10 = seg.segmenta(img_lim) - (num_1r + num_25 + num_5)
-	print("Moedas 10: " + str(num_10))
+    num_10 = seg.segmenta(img_lim) - (num_1r + num_25 + num_5)
+    if(verbose):
+        print("Moedas 10: " + str(num_10))
 
-	valor_moedas = 1.0*num_1r + 0.25*num_25 + 0.10*num_10 + 0.05*num_5
+    valor_moedas = 1.0*num_1r + 0.25*num_25 + 0.10*num_10 + 0.05*num_5
 
-	return valor_moedas
+    return valor_moedas
 
 def main(argv):
     #argv[1] = imagem a contar moedas

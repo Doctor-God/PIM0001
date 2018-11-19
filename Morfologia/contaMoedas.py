@@ -1,7 +1,10 @@
+#-*- coding=utf-8 -*-
+
 import numpy as np
 import cv2
 import sys
 import morfo as mo
+import segmenta as seg
 
 def thresholding(img, limite):
     out = np.zeros(img.shape, np.uint8)
@@ -11,36 +14,83 @@ def thresholding(img, limite):
                 out[y,x] = 255
     return out
 
-def conta(img, limite):
-    elem_1r = cv2.imread("Imagens/moeda_1r_elem.jpg", 0)
-    elem_50 = cv2.imread("Imagens/moeda_50_elem.jpg", 0)
-    elem_25 = cv2.imread("Imagens/moeda_25_elem.jpg", 0)
-    elem_10 = cv2.imread("Imagens/moeda_10_elem.jpg", 0)
-    elem_5 = cv2.imread("Imagens/moeda_5_elem.jpg", 0)
+def conta(img, limite, verbose=False):
+	elem_1r = cv2.imread("Imagens/moeda_1r_elem.jpg", 0)
+	elem_50 = cv2.imread("Imagens/moeda_50_elem.jpg", 0)
+	elem_25 = cv2.imread("Imagens/moeda_25_elem.jpg", 0)
+	elem_10 = cv2.imread("Imagens/moeda_10_elem.jpg", 0)
+	elem_5 = cv2.imread("Imagens/moeda_5_elem.jpg", 0)
 
-    img = thresholding(img, limite)
-    cv2.imshow("oi", img)
-    cv2.waitKey()
-    cv2.destroyAllWindows()
+	img_lim = thresholding(img, limite)
+	if(verbose):
+		cv2.imshow("Imagem limiarizada", img_lim)
+		cv2.waitKey()
+		cv2.destroyAllWindows()
 
-    # elem = cv2.imread("Imagens/elemento_esfera_maior.png", 0)
-    # temp = mo.dilata(img, elem)
 
-    temp = mo.erode(img, elem_10)
-    cv2.imshow("oi", temp)
-    cv2.waitKey()
-    cv2.destroyAllWindows()
+	temp = cv2.erode(img_lim, elem_25, iterations=1)
+	num_1r = seg.segmenta(temp)
+	temp = cv2.dilate(temp, elem_25, iterations=1)
+	print num_1r
+	if(verbose):
+		cv2.imshow("Moedas 1r", temp)
+		cv2.waitKey()
+		cv2.destroyAllWindows()
 
+	temp = cv2.erode(img_lim, elem_50, iterations=1)
+	num_25 = seg.segmenta(temp) - num_1r
+	temp = cv2.dilate(temp, elem_50, iterations=1)
+	print num_25
+	if(verbose):
+		cv2.imshow("Moedas 1r e 25", temp)
+		cv2.waitKey()
+		cv2.destroyAllWindows()
+
+	temp = cv2.erode(img_lim, elem_5, iterations=1)
+	num_50 = seg.segmenta(temp) - (num_1r+num_25)
+	temp = cv2.dilate(temp, elem_5, iterations=1)
+	print num_50
+
+	if(verbose):
+		cv2.imshow("Moedas 1r, 25 e 50", temp)
+		cv2.waitKey()
+		cv2.destroyAllWindows()
+
+	temp = cv2.erode(img_lim, elem_10, iterations=1)
+	num_5 = seg.segmenta(temp) - (num_1r + num_25 + num_50)
+	temp = cv2.dilate(temp, elem_10, iterations=1)
+	print num_5
+	if(verbose):
+		cv2.imshow("Moedas 1r, 25, 50 e 5", temp)
+		cv2.waitKey()
+		cv2.destroyAllWindows()
+
+	num_10 = seg.segmenta(img_lim) - (num_1r + num_25 + num_50 + num_5)
+	print num_10
+
+	valor_moedas = 1.0*num_1r + 0.50*num_50 + 0.25*num_25 + 0.10*num_10 + 0.05*num_5
+
+	return valor_moedas
 
 def main(argv):
     #argv[1] = imagem a contar moedas
     #argv[2] = limiar
-    if(len(argv) != 3):
-        print("python contaMoedas.py img limiar")
+    if(len(argv) < 3 or len(argv) > 4):
+        print("python contaMoedas.py img limiar [verbose]")
         exit()
+    elif(len(argv) == 4):
+    	if(argv[3] != "verbose"):
+    		print("python contaMoedas.py img limiar verbose")
+    		exit()
+
 
     img = cv2.imread(argv[1], 0)
-    valor = conta(img, int(argv[2]))
+    if(len(argv) == 4):
+    	valor = conta(img, int(argv[2]), verbose=True)
+    else:
+    	valor = conta(img, int(argv[2]))
+
+    print("Valor em moedas = R$%.2f" % valor)
 
 if __name__ == "__main__":
     main(sys.argv)

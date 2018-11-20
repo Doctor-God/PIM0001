@@ -16,10 +16,15 @@ def thresholding(img, limite):
 
     elem = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (50,50))
 
+    #Fechamento duas vezes
     out = cv2.dilate(out, elem, iterations=1)
     out = cv2.erode(out, elem, iterations=1)
     out = cv2.dilate(out, elem, iterations=1)
     out = cv2.erode(out, elem, iterations=1)
+
+    #Abertura
+    # out = cv2.erode(out, elem, iterations=1)
+    # out = cv2.dilate(out, elem, iterations=1)
 
     return out
 
@@ -28,10 +33,10 @@ def conta(img, limite, verbose=False):
     elem_1r = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (270, 270)) # 300 antiga / 270 novas
     # elem_50 = cv2.imread("Imagens_reais/moeda_50_elem.jpg", 0)
     # elem_25 = cv2.imread("Imagens_reais/moeda_25_elem.jpg", 0) #280
-    elem_25 = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (250, 250)) # 280 antiga / 250 novas
+    elem_25 = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (255, 255)) # 280 antiga / 250 novas
     # elem_10 = cv2.imread("Imagens_reais/moeda_10_elem.jpg", 0)
     # elem_5 = cv2.imread("Imagens_reais/moeda_5_elem.jpg", 0) #250
-    elem_50 = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (237, 237)) # 237
+    elem_50 = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (240, 240)) # 237
 
     elem_5 = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (225, 225)) # 250 antiga / 225 nova
     # plt.hist(img.ravel(),256,[0,256]); plt.show()

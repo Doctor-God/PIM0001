@@ -25,13 +25,15 @@ def thresholding(img, limite):
 
 def conta(img, limite, verbose=False):
     # elem_1r = cv2.imread("Imagens_reais/moeda_1r_elem.jpg", 0)
-    elem_1r = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (300, 300)) # 300
+    elem_1r = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (270, 270)) # 300 antiga / 270 novas
     # elem_50 = cv2.imread("Imagens_reais/moeda_50_elem.jpg", 0)
     # elem_25 = cv2.imread("Imagens_reais/moeda_25_elem.jpg", 0) #280
-    elem_25 = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (280, 280)) # 280
+    elem_25 = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (250, 250)) # 280 antiga / 250 novas
     # elem_10 = cv2.imread("Imagens_reais/moeda_10_elem.jpg", 0)
     # elem_5 = cv2.imread("Imagens_reais/moeda_5_elem.jpg", 0) #250
-    elem_5 = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (250, 250)) # 280
+    elem_50 = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (237, 237)) # 237
+
+    elem_5 = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (225, 225)) # 250 antiga / 225 nova
     # plt.hist(img.ravel(),256,[0,256]); plt.show()
 
     img_lim = thresholding(img, limite)
@@ -63,14 +65,25 @@ def conta(img, limite, verbose=False):
         cv2.waitKey()
         cv2.destroyAllWindows()
 
+
+    temp = cv2.erode(img_lim, elem_50, iterations=1)
+    num_50 = seg.segmenta(temp) - (num_1r + num_25)
+    temp = cv2.dilate(temp, elem_50, iterations=1)
+    if(verbose):
+        print("Moedas 50: " + str(num_50))
+        sized = cv2.resize(temp, (960, 540))
+        cv2.imshow("Moedas 1r, 25 e 50", sized)
+        cv2.waitKey()
+        cv2.destroyAllWindows()
+
     temp = cv2.erode(img_lim, elem_5, iterations=1)
-    num_5 = seg.segmenta(temp) - (num_1r+num_25)
+    num_5 = seg.segmenta(temp) - (num_1r+num_25+num_50)
     temp = cv2.dilate(temp, elem_5, iterations=1)
 
     if(verbose):
         print("Moedas 5: " + str(num_5))
         sized = cv2.resize(temp, (960, 540))
-        cv2.imshow("Moedas 1r, 25 e 5", sized)
+        cv2.imshow("Moedas 1r, 25, 50 e 5", sized)
         cv2.waitKey()
         cv2.destroyAllWindows()
 
@@ -84,11 +97,11 @@ def conta(img, limite, verbose=False):
     # 	cv2.waitKey()
     # 	cv2.destroyAllWindows()
 
-    num_10 = seg.segmenta(img_lim) - (num_1r + num_25 + num_5)
+    num_10 = seg.segmenta(img_lim) - (num_1r + num_25 + num_50 + num_5)
     if(verbose):
         print("Moedas 10: " + str(num_10))
 
-    valor_moedas = 1.0*num_1r + 0.25*num_25 + 0.10*num_10 + 0.05*num_5
+    valor_moedas = 1.0*num_1r + 0.5*num_50 + 0.25*num_25 + 0.10*num_10 + 0.05*num_5
 
     return valor_moedas
 

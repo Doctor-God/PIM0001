@@ -20,8 +20,8 @@ def thresholding(img, limite):
     #Fechamento duas vezes
     out = cv2.dilate(out, elem, iterations=1)
     out = cv2.erode(out, elem, iterations=1)
-    out = cv2.dilate(out, elem, iterations=1)
-    out = cv2.erode(out, elem, iterations=1)
+    # out = cv2.dilate(out, elem, iterations=1)
+    # out = cv2.erode(out, elem, iterations=1)
 
     #Abertura
     out = cv2.erode(out, elem2, iterations=1)
@@ -53,8 +53,8 @@ def conta(img, limite, verbose=False):
 
     temp = cv2.erode(img_lim, elem_1r, iterations=1)
     num_1r = seg.segmenta(temp)
-    temp = cv2.dilate(temp, elem_1r, iterations=1)
     if(verbose):
+        temp = cv2.dilate(temp, elem_1r, iterations=1)
         print("Moedas 1r: " + str(num_1r))
         sized = cv2.resize(temp, (960, 540))
         cv2.imshow("Moedas 1r", sized)
@@ -63,8 +63,8 @@ def conta(img, limite, verbose=False):
 
     temp = cv2.erode(img_lim, elem_25, iterations=1)
     num_25 = seg.segmenta(temp) - num_1r
-    temp = cv2.dilate(temp, elem_25, iterations=1)
     if(verbose):
+        temp = cv2.dilate(temp, elem_25, iterations=1)
         print("Moedas 25: " + str(num_25))
         sized = cv2.resize(temp, (960, 540))
         cv2.imshow("Moedas 1r e 25", sized)
@@ -74,8 +74,8 @@ def conta(img, limite, verbose=False):
 
     temp = cv2.erode(img_lim, elem_50, iterations=1)
     num_50 = seg.segmenta(temp) - (num_1r + num_25)
-    temp = cv2.dilate(temp, elem_50, iterations=1)
     if(verbose):
+        temp = cv2.dilate(temp, elem_50, iterations=1)
         print("Moedas 50: " + str(num_50))
         sized = cv2.resize(temp, (960, 540))
         cv2.imshow("Moedas 1r, 25 e 50", sized)
@@ -84,9 +84,8 @@ def conta(img, limite, verbose=False):
 
     temp = cv2.erode(img_lim, elem_5, iterations=1)
     num_5 = seg.segmenta(temp) - (num_1r+num_25+num_50)
-    temp = cv2.dilate(temp, elem_5, iterations=1)
-
     if(verbose):
+        temp = cv2.dilate(temp, elem_5, iterations=1)
         print("Moedas 5: " + str(num_5))
         sized = cv2.resize(temp, (960, 540))
         cv2.imshow("Moedas 1r, 25, 50 e 5", sized)
